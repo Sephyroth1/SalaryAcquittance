@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-xl font-bold text-gray-800 mb-2">Profile</h1>
+                <div class="relative inline-block text-left" id="profileDropdownRoot">
+                    <button id="profileToggle" aria-haspopup="true" aria-expanded="false"
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <!-- <img src="https://ui-avatars.com/api/?name=SS&background=0D8ABC&color=fff&rounded=true"
+                            alt="User avatar" class="w-8 h-8 rounded-full object-cover"> -->
+                        <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zM4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z"
+                                fill="currentColor" />
+                        </svg>
+                        <span class="hidden md:inline-block text-sm font-medium text-gray-700" id="profileName"></span>
+                        <svg id="profileChevron" class="w-6 h-6 text-gray-500 transition-transform m-2"
+                            viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <div id="profileMenu"
+                        class="origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition opacity-0 scale-95 pointer-events-none"
+                        role="menu" aria-hidden="true">
+                        <div class="py-1">
+                            <a href="" role="menuitem" tabindex="-1" id="profileLink"
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zM4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z"
+                                        fill="currentColor" />
+                                </svg>
+                                Profile
+                            </a>
+                            <div class="border-t my-1"></div>
+                            <button id="logoutBtn" role="menuitem" tabindex="-1"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto w-full p-6">
+
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <!-- Left: Profile Info -->
+            <div class="bg-white p-6 rounded shadow min-h-[300px] flex flex-col justify-center">
+                <h2 class="text-xl font-semibold mb-4">User Details</h2>
+                <p class="mb-4"><strong>Name:</strong> <span id="name">John Doe</span></p>
+                <p class="mb-4"><strong>Username:</strong> <span id="username">johndoe</span></p>
+                <p class="mb-4"><strong>Role:</strong> <span id="role">ADMIN</span></p>
+                <button type="button" id="changePasswordBtn"
+                    class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200">
+                    Change Password
+                </button>
+
+                <form id="changePasswordForm" class="hidden">
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="password" name="password" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 password"
+                            placeholder="Enter password">
+                    </div>
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Confirm
+                            Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 password"
+                            placeholder="Confirm Your Password">
+                    </div>
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
+                        Change Password
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right: Audit Logs -->
+            <div class="bg-white p-6 rounded shadow min-h-[300px] flex flex-col justify-center overflow-hidden items-center"
+                id="auditLogs">
+                <h2 class="text-xl font-semibold mb-4">Audit Usage Logs</h2>
+                <ul class="text-sm text-gray-700 space-y-2 overflow-y-auto max-h-60 pr-2">
+                    <li>🕒 2025-08-12 09:14 — Logged in from IP 192.168.1.14</li>
+                    <li>🕒 2025-08-12 09:16 — Viewed staff dashboard</li>
+                    <li>🕒 2025-08-12 09:20 — Updated staff member #204</li>
+                    <li>🕒 2025-08-12 09:23 — Viewed payroll calculations</li>
+                    <li>🕒 2025-08-12 09:30 — Logged out</li>
+                    <li>🕒 2025-08-12 10:05 — Logged in from IP 192.168.1.22</li>
+                    <li>🕒 2025-08-12 10:08 — Viewed profile</li>
+                    <li>🕒 2025-08-12 10:15 — Generated reports</li>
+                    <li>🕒 2025-08-12 10:18 — Logged out</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="../scripts/lastScript.js"></script>
+</body>
+
+</html>

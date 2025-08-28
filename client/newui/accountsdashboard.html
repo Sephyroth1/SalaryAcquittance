@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Salary Acquittance Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-xl font-bold text-gray-800 mb-2">Accounts Dashboard</h1>
+                <div class="relative inline-block text-left" id="profileDropdownRoot">
+                    <button id="profileToggle" aria-haspopup="true" aria-expanded="false"
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <!-- <img src="https://ui-avatars.com/api/?name=SS&background=0D8ABC&color=fff&rounded=true"
+                            alt="User avatar" class="w-8 h-8 rounded-full object-cover"> -->
+                        <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zM4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z"
+                                fill="currentColor" />
+                        </svg>
+                        <span class="hidden md:inline-block text-sm font-medium text-gray-700" id="profileName"></span>
+                        <svg id="profileChevron" class="w-6 h-6 text-gray-500 transition-transform m-2"
+                            viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <div id="profileMenu"
+                        class="origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition opacity-0 scale-95 pointer-events-none"
+                        role="menu" aria-hidden="true">
+                        <div class="py-1">
+                            <a href="" role="menuitem" tabindex="-1" id="profileLink"
+                                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zM4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z"
+                                        fill="currentColor" />
+                                </svg>
+                                Profile
+                            </a>
+                            <div class="border-t my-1"></div>
+                            <button id="logoutBtn" role="menuitem" tabindex="-1"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button
+                    class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
+                    Salary Calculator
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Salary Calculator Tab -->
+        <div id="salaryComponentRulesTab" class="tab-content">
+            <div class="bg-white rounded-lg shadow">
+                <div id="calculatorTab" class="tab-content ">
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h2 class="text-lg font-medium text-gray-900">Salary Calculator</h2>
+                        </div>
+                        <div class="p-6">
+                            <form id="salaryCalculatorForm" class="flex flex-wrap gap-4 items-end mb-6">
+                                <input type="date" name="startDate" id="startDate">
+                                <input type="date" name="endDate" id="endDate">
+                                <button type="submit" id="calcSalary"
+                                    class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200">
+                                    Calculate Salary
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="calculateSalary" class="hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="calcTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Staff ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Staff Name
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Basic Pay
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Hra
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Ta
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Da
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Gross Salary
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Pf
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Esi
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                It
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Net Salary
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                Start Date
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                End Date
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="calcSalaryBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Salary data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- <div id="reportTab" class="tab-content">
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-medium text-gray-900">Acquittance Report</h2>
+                    <div class="space-x-2">
+                        <button onclick="printReport()"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">
+                            Print Report
+                        </button>
+                        <button onclick="downloadPDF()"
+                            class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200">
+                            Download PDF
+                        </button>
+                        <button onclick="downloadExcel()"
+                            class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200">
+                            Download Excel
+                        </button>
+                    </div>
+                </div>
+                <div id="reportContent" class="p-6">
+                    <div class="text-center mb-6">
+                        <p id="reportPeriod" class="text-gray-600 mt-2">Please calculate salary first</p>
+                    </div>
+
+        <input type="date" name="startDate" id="startDate">
+        <input type="date" name="endDate" id="endDate">
+        <button type="submit" onclick="printReport()"
+            class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200">
+            Generate Report
+        </button>
+        <div class="flex gap-4 items-center justify-center">
+            <div id="reportTable" class="overflow-x-auto w-full">
+                 Report table will be populated here 
+        </div>
+        </div>
+        </div>
+        </div>
+        </div> --->
+
+
+
+    <script src="../scripts/lastScript.js"></script>
+    <script src="../scripts/accountsScript.js"></script>
+</body>
+
+</html>
