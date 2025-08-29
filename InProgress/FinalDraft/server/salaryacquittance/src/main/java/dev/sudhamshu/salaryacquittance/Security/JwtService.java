@@ -1,0 +1,70 @@
+package dev.sudhamshu.salaryacquittance.Security;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
+@Service
+public class JwtService {
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration}")
+    private long expiration;
+
+    @SuppressWarnings("deprecation")
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser().setSigningKey(getSignKey()).build().parseClaimsJws(token).getBody();
+    }
+
+    private SecretKey getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public boolean isTokenValid(String token, UserDetails user) {
+        final String username = extractUsername(token);
+        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+    }
+
+    public boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new java.util.Date());
+    }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public String generateToken(UserDetails user) {
+        return generateToken(new HashMap<>(), user);
+    }
+
+    @SuppressWarnings("deprecation")
+    public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
+        return Jwts.builder().setClaims(extraClaims).setSubject(user.getUsername())
+                .setIssuedAt(new java.util.Date(System.currentTimeMillis()))
+                .setExpiration(new java.util.Date(System.currentTimeMillis() + expiration)).signWith(getSignKey())
+                .compact();
+    }
+}
