@@ -16,9 +16,9 @@ AcquitFlow is a simple, secure, and efficient tool designed for HR professionals
 ## 🛠️ Tech Stack (Example)
 
 -   **Frontend:** React, Vite, Tailwind CSS
--   **Backend:** Node.js, Express.js
--   **Database:** MongoDB / PostgreSQL
--   **Deployment:** Docker, Vercel
+-   **Backend:** Spring Boot
+-   **Database:** PostgreSQL
+-   **Deployment:** Render
 
 ## 🚀 Getting Started
 
