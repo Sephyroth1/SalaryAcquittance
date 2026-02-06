@@ -24,17 +24,25 @@ AcquitFlow is a simple, secure, and efficient tool designed for HR professionals
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/Sephyroth1/SalaryAcquittance)
+    git clone https://github.com/Sephyroth1/SalaryAcquittance
     ```
-2.  **Navigate to the project directory:**
+2.  **Navigate to the project directory (server) :**
     ```sh
-    cd SalaryAcquittance
+    cd SalaryAcquittance/server/salaryacquittanceapi
     ```
-3.  **Install dependencies:**
+
+    **Navigate to the project directory (client):**
+    ```sh
+    cd SalaryAcquittance/client
+    ```
+
+    ### Note: The frontend is just a set of simple html files as we were under a time constraint because of the time constraint
+    
+4.  **Install dependencies (server):**
     ```sh
     ./mvnw.cmd install
     ```
-4.  **Run the application:**
+5.  **Run the application (server):**
     ```sh
     ./mvnw.cmd spring-boot:run
     ```
