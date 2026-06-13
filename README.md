@@ -1,430 +1,782 @@
-# AcquitFlow - HR Payroll Management System
+# Veritas
 
-> A comprehensive HR payroll management system for automating salary acquittance generation, employee management, and audit-trail tracking.
+> **Enterprise Payroll & Compliance Platform with Audit Intelligence**
 
-AcquitFlow is a full-stack web application designed for organizations to efficiently manage employee payroll, generate compliant salary acquittance reports, and maintain secure records with complete audit trails using **Spring Boot AOP** for transaction logging.
+Veritas is a full-stack payroll and compliance management system designed to help organizations automate employee payroll processing, generate salary acquittance reports, and maintain complete audit trails for accountability and regulatory compliance.
 
----
-
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Architecture](#-system-architecture)
-- [Tech Stack](#-tech-stack)
-- [Prerequisites](#-prerequisites)
-- [Setup Instructions](#-setup-instructions)
-- [API Documentation](#-api-documentation)
-- [Database Schema](#-database-schema)
-- [Deployment](#-deployment)
-- [Future Improvements](#-future-improvements)
+Built with **Spring Boot**, **React**, and **PostgreSQL**, Veritas focuses on enterprise-grade architecture principles such as **separation of concerns**, **role-based access control**, **audit logging through AOP**, and **secure authentication**.
 
 ---
 
-## ✨ Features
+## Table of Contents
 
-### Core HR Functionality
-- **Employee Management**
-  - CRUD operations for employee profiles (name, department, designation, salary components)
-  - Role-based employee classification (full-time, part-time, contract)
-  - Department and designation management
-
-- **Salary Management**
-  - Configurable salary components (basic, HRA, DA, allowances, deductions)
-  - Automated salary calculations based on employee records
-  - Support for multiple pay periods (monthly, quarterly)
-
-- **Acquittance Report Generation**
-  - Automated generation of salary acquittance reports for any pay period
-  - Professional PDF export for compliance documentation
-  - Excel export for accounting integration
-  - Customizable report templates
-
-- **Audit & Compliance**
-  - Complete audit trail of all payroll transactions using **Spring Boot AOP**
-  - Logging format: `<user> downloaded salary acquittance for <employee> on <date>`
-  - Admin-accessible audit logs for compliance and dispute resolution
-  - Transaction timestamp tracking for regulatory requirements
-
-- **Search & Filtering**
-  - Find reports by employee name, department, or date range
-  - Quick access to historical payroll records
-  - Employee-wise salary history
+- [Overview](#overview)
+- [Core Features](#core-features)
+- [System Architecture](#system-architecture)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Database Design](#database-design)
+- [Authentication & Authorization](#authentication--authorization)
+- [Audit Logging](#audit-logging)
+- [API Endpoints](#api-endpoints)
+- [Getting Started](#getting-started)
+- [Backend Setup](#backend-setup)
+- [Frontend Setup](#frontend-setup)
+- [Docker Setup](#docker-setup)
+- [Testing Strategy](#testing-strategy)
+- [Deployment](#deployment)
+- [Current Development Status](#current-development-status)
+- [Future Enhancements](#future-enhancements)
+- [Architecture Decisions](#architecture-decisions)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 🏗️ System Architecture
+# Overview
 
-### High-Level Architecture Diagram
+Veritas is designed to streamline payroll operations while ensuring transparency and compliance.
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Frontend (React)                      │
-│         (Vite + Tailwind CSS - Production Ready)        │
-└────────────────────────┬────────────────────────────────┘
-                         │
-                    HTTP / REST
-                         │
-┌────────────────────────▼────────────────────────────────┐
-│              Spring Boot REST API                        │
-├─────────────────────────────────────────────────────────┤
-│  Controllers (Employee, Salary, Acquittance, Audit)    │
-│  Services (Business Logic)                              │
-│  Spring Boot AOP (Audit Logging)                        │
-│  Authentication & Authorization Layer                   │
-└────────────────────────┬────────────────────────────────┘
-                         │
-                    JDBC / JPA
-                         │
-┌────────────────────────▼────────────────────────────────┐
-│           PostgreSQL Database                           │
-│  (Employees, Salary Components, Transactions, Logs)    │
-└─────────────────────────────────────────────────────────┘
-```
+The system enables administrators and HR personnel to:
 
-### Data Flow for Acquittance Generation
+- Manage employee records
+- Configure salary structures
+- Process payroll efficiently
+- Generate salary acquittance reports
+- Maintain immutable audit logs
+- Enforce secure access using role-based permissions
 
-```
-1. Admin selects pay period
-   ↓
-2. System retrieves employee data from DB
-   ↓
-3. Calculate salary (basic + components - deductions)
-   ↓
-4. Generate acquittance report (PDF/Excel)
-   ↓
-5. Log action via AOP: "<user> generated acquittance for <employee>"
-   ↓
-6. Return report to user
-```
+Unlike traditional payroll systems focused solely on calculations, Veritas emphasizes **traceability**, ensuring every sensitive action can be attributed to a specific user at a specific time.
 
 ---
 
-## 💻 Tech Stack
+# Core Features
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Frontend** | React 18+ | Dynamic UI, real-time form handling |
-| | Vite | Fast build tool & dev server |
-| | Tailwind CSS | Responsive styling |
-| | Axios | HTTP client for API calls |
-| **Backend** | Spring Boot 3.x | REST API, business logic |
-| | Spring Data JPA | ORM for database operations |
-| | Spring AOP | Audit logging (Before/After annotations) |
-| | JWT Auth | Secure user authentication |
-| **Database** | PostgreSQL 14+ | Relational data persistence |
-| **Deployment** | Docker | Containerization |
-| | Render / AWS | Cloud hosting |
+## Employee Management
+
+- Create employee profiles
+- Update employee information
+- View employee details
+- Delete employee records
+- Search employees by department, designation, or name
+- Maintain employee salary history
 
 ---
 
-## 📋 Prerequisites
+## Payroll Management
 
-- **Java 17+** (for Spring Boot)
-- **Node.js 16+** (for React frontend)
-- **PostgreSQL 14+** (database)
-- **Maven 3.8+** (for building Java project)
-- **Git** (for cloning repository)
+- Automated salary processing
+- Configurable salary structures
+- Gross salary calculations
+- Deduction handling
+- Net salary computation
+- Historical payroll records
 
 ---
 
-## 🚀 Setup Instructions
+## Salary Components
 
-### 1. Clone the Repository
+Supports configurable salary components including:
 
-```bash
-git clone https://github.com/Sephyroth1/SalaryAcquittance.git
-cd SalaryAcquittance
-```
+- Basic Salary
+- House Rent Allowance (HRA)
+- Dearness Allowance (DA)
+- Special Allowances
+- Bonuses
+- Deductions
+- Other Compensation Components
 
-### 2. Backend Setup (Spring Boot)
+---
 
-```bash
-cd server/salaryacquittanceapi
+## Acquittance Report Generation
 
-# Install dependencies
-./mvnw clean install
+Generate professional payroll reports in multiple formats:
 
-# Configure application.properties (database credentials)
-# Edit src/main/resources/application.properties
-# Set:
-# spring.datasource.url=jdbc:postgresql://localhost:5432/acquitflow
-# spring.datasource.username=<your_username>
-# spring.datasource.password=<your_password>
+- PDF Reports
+- Excel Exports
+- Historical Report Retrieval
+- Employee-Specific Reports
+- Monthly Payroll Statements
 
-# Run the application
-./mvnw spring-boot:run
-```
+---
 
-Backend will run on: **http://localhost:8080**
+## Authentication & Security
 
-### 3. Frontend Setup (React)
+- JWT Authentication
+- Password Encryption using BCrypt
+- Secure Session Management
+- Role-Based Access Control (RBAC)
+- Endpoint Protection
+- Input Validation
 
-```bash
-cd ../../client
+---
 
-# Install dependencies
-npm install
+## Audit & Compliance
 
-# Create .env file
-echo "VITE_API_URL=http://localhost:8080/api" > .env
+Comprehensive audit tracking using Spring AOP.
 
-# Run development server
-npm run dev
-```
+Captures:
 
-Frontend will run on: **http://localhost:5173**
+- User performing the action
+- Timestamp of the event
+- Entity affected
+- Action executed
+- Previous values (where applicable)
+- Updated values
 
-### 4. Database Setup
+Example:
 
-```bash
-# Create PostgreSQL database
-createdb acquitflow
+```text
+HR_MANAGER updated salary details for Employee #105
 
-# Run migrations (if present)
-# SQL schema will be auto-generated by Spring Boot JPA
+Before:
+Basic Salary: ₹45,000
+
+After:
+Basic Salary: ₹50,000
+
+Timestamp:
+2026-06-13 10:42:18
 ```
 
 ---
 
-## 📡 API Documentation
+# System Architecture
 
-### Authentication
-```
-POST /api/auth/login
-  Body: { "username": "admin", "password": "password" }
-  Returns: { "token": "jwt_token", "userId": 1 }
-```
-
-### Employee Endpoints
-```
-GET    /api/employees              - List all employees
-POST   /api/employees              - Create new employee
-GET    /api/employees/{id}         - Get employee details
-PUT    /api/employees/{id}         - Update employee
-DELETE /api/employees/{id}         - Delete employee
-```
-
-### Salary Endpoints
-```
-POST   /api/salary/calculate       - Calculate salary for period
-GET    /api/salary/history/{employeeId} - Get salary history
-```
-
-### Acquittance Endpoints
-```
-POST   /api/acquittance/generate   - Generate report
-  Body: { "employeeId": 1, "month": "2024-01", "format": "pdf" }
-  Returns: PDF file
-
-GET    /api/acquittance/list       - List all reports
-GET    /api/acquittance/{id}       - Get specific report
-```
-
-### Audit Log Endpoints (Admin Only)
-```
-GET    /api/audit/logs             - View all audit logs
-GET    /api/audit/logs/{userId}    - View user-specific logs
-```
-
-**Note:** Audit logs are automatically generated via Spring AOP @Before and @After annotations on controller methods.
-
----
-
-## 🗄️ Database Schema
-
-### Key Tables
-
-**employees**
-```sql
-├── id (PK)
-├── name VARCHAR
-├── email VARCHAR (UNIQUE)
-├── department VARCHAR
-├── designation VARCHAR
-├── salary_component_id (FK)
-├── role ENUM (EMPLOYEE, ADMIN)
-├── created_at TIMESTAMP
-└── updated_at TIMESTAMP
-```
-
-**salary_components**
-```sql
-├── id (PK)
-├── employee_id (FK)
-├── basic_salary DECIMAL
-├── hra DECIMAL
-├── da DECIMAL
-├── other_allowances DECIMAL
-├── deductions DECIMAL
-└── effective_from DATE
-```
-
-**acquittance_reports**
-```sql
-├── id (PK)
-├── employee_id (FK)
-├── pay_period VARCHAR (2024-01)
-├── gross_salary DECIMAL
-├── net_salary DECIMAL
-├── generated_at TIMESTAMP
-├── generated_by (FK to users)
-└── file_path VARCHAR
-```
-
-**audit_logs** (Auto-generated by AOP)
-```sql
-├── id (PK)
-├── user_id (FK)
-├── action VARCHAR ("downloaded salary acquittance", etc.)
-├── employee_id (FK)
-├── timestamp TIMESTAMP
-└── details JSON
+```text
+                           ┌────────────────────┐
+                           │     React UI       │
+                           │ (Vite + Tailwind)  │
+                           └─────────┬──────────┘
+                                     │
+                               REST API Calls
+                                     │
+                           ┌─────────▼──────────┐
+                           │   Spring Boot API  │
+                           └─────────┬──────────┘
+                                     │
+      ┌──────────────────────────────┼──────────────────────────────┐
+      │                              │                              │
+┌─────▼─────┐               ┌────────▼───────┐             ┌────────▼──────┐
+│ Security  │               │ Business Logic │             │ Audit Logging │
+│   Layer   │               │    Services    │             │   (Spring AOP)│
+└─────┬─────┘               └────────┬───────┘             └────────┬──────┘
+      │                               │                              │
+      └───────────────────────────────┼──────────────────────────────┘
+                                      │
+                               ┌──────▼──────┐
+                               │ PostgreSQL  │
+                               │  Database   │
+                               └─────────────┘
 ```
 
 ---
 
-## 🔐 Security Features
+# Technology Stack
 
-- **JWT-based Authentication**: Secure token-based user sessions
-- **Role-Based Access Control (RBAC)**: Employees can only view their own data; admins have full access
-- **Spring AOP Audit Logging**: Every sensitive action (downloads, calculations) is logged with user, timestamp, and details
-- **CORS Configuration**: Properly configured for production deployment
-- **Input Validation**: All API inputs validated on backend
-- **SQL Injection Prevention**: JPA parameterized queries
+| Layer | Technology |
+|---------|------------|
+| Frontend | React 18 |
+| Frontend Build Tool | Vite |
+| Frontend Styling | Tailwind CSS |
+| HTTP Client | Axios |
+| Backend | Spring Boot 3 |
+| Security | Spring Security |
+| Authentication | JWT |
+| ORM | Spring Data JPA |
+| Database | PostgreSQL |
+| Audit Logging | Spring AOP |
+| Validation | Jakarta Validation |
+| Build Tool | Maven |
+| Testing | JUnit 5 |
+| Mocking | Mockito |
+| Integration Testing | Testcontainers |
+| PDF Generation | OpenPDF |
+| Excel Export | Apache POI |
+| Containerization | Docker |
+| Frontend Deployment | Vercel |
+| Backend Deployment | Render / Railway / AWS |
 
 ---
 
-## 📦 Deployment
+# Project Structure
 
-### Using Docker
-
-```bash
-# Build Docker image
-docker build -t acquitflow:latest .
-
-# Run container
-docker run -p 8080:8080 \
-  -e DB_URL=jdbc:postgresql://db:5432/acquitflow \
-  -e DB_USER=postgres \
-  -e DB_PASSWORD=password \
-  acquitflow:latest
+```text
+veritas/
+│
+├── backend/
+│   ├── src/main/java/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── repository/
+│   │   ├── entity/
+│   │   ├── dto/
+│   │   ├── mapper/
+│   │   ├── security/
+│   │   ├── audit/
+│   │   ├── exception/
+│   │   ├── config/
+│   │   └── util/
+│   │
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   │
+│   └── pom.xml
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── hooks/
+│   │   ├── context/
+│   │   ├── services/
+│   │   └── utils/
+│   │
+│   └── package.json
+│
+├── docker-compose.yml
+├── README.md
+└── LICENSE
 ```
 
-### Deploy to Render
+---
 
-1. Create a new Web Service on Render
-2. Connect your GitHub repository
-3. Set environment variables (database URL, credentials)
-4. Deploy
+# Database Design
 
-### Deploy Frontend to Vercel
+## Users
 
-```bash
-npm install -g vercel
-vercel deploy
+```text
+users
+------
+id
+username
+email
+password
+role
+enabled
+created_at
+updated_at
 ```
 
 ---
 
-## 🔄 Current Status
+## Employees
 
-- ✅ **Employee Management**: Full CRUD operations
-- ✅ **Salary Calculations**: Automated based on components
-- ✅ **Report Generation**: PDF/Excel export
-- ✅ **Audit Logging**: Spring AOP implementation
-- 🔄 **Authentication**: Basic implementation (to be refactored with JWT + role-based access)
-- 🔄 **CORS Configuration**: Fix for production (currently causing issues)
-- 🔄 **Error Handling**: Comprehensive error responses (in progress)
-- 🔄 **Unit Tests**: Improve coverage (target: 70%+)
-
----
-
-## 🛠️ Future Improvements
-
-1. **Payment Integration**
-   - Razorpay/Stripe integration for salary disbursement
-   - Transaction tracking and reconciliation
-
-2. **Advanced Features**
-   - Multi-currency support
-   - Tax calculations (TDS, income tax)
-   - Attendance-based salary deductions
-   - Leave management integration
-
-3. **Scalability**
-   - Caching layer (Redis) for frequently accessed data
-   - Database indexing optimization
-   - Async processing for bulk report generation
-
-4. **Analytics & Reporting**
-   - Dashboard with payroll metrics
-   - Year-end tax summaries
-   - Departmental salary analytics
-
-5. **Compliance**
-   - E-signature support for acquittance reports
-   - Compliance audit reports for statutory requirements
-   - GDPR-compliant data export/deletion
+```text
+employees
+-----------
+id
+employee_code
+first_name
+last_name
+email
+department
+designation
+employment_type
+date_of_joining
+created_at
+updated_at
+```
 
 ---
 
-## 📚 Learning & Architecture Decisions
+## Salary Components
 
-### Why Spring Boot AOP for Audit Logging?
-- **Separation of Concerns**: Audit logic decoupled from business logic
-- **Reusability**: Single @Aspect can log multiple controller methods
-- **Maintainability**: Easy to add/remove logging without changing core code
-- **Performance**: Aspect weaving only for marked methods
+```text
+salary_components
+-----------------
+id
+employee_id
+basic_salary
+hra
+da
+special_allowances
+deductions
+effective_from
+created_at
+updated_at
+```
 
-### Example AOP Implementation
+---
+
+## Payroll Transactions
+
+```text
+payroll_transactions
+--------------------
+id
+employee_id
+pay_period
+gross_salary
+total_deductions
+net_salary
+processed_by
+processed_at
+status
+```
+
+---
+
+## Acquittance Reports
+
+```text
+acquittance_reports
+-------------------
+id
+employee_id
+payroll_transaction_id
+report_type
+generated_by
+generated_at
+file_path
+```
+
+---
+
+## Audit Logs
+
+```text
+audit_logs
+-----------
+id
+user_id
+action
+entity_name
+entity_id
+old_value
+new_value
+timestamp
+details
+```
+
+---
+
+# Authentication & Authorization
+
+Veritas implements JWT-based authentication with Role-Based Access Control.
+
+Supported roles:
+
+```text
+ADMIN
+HR_MANAGER
+EMPLOYEE
+AUDITOR
+```
+
+Permissions include:
+
+| Feature | ADMIN | HR_MANAGER | EMPLOYEE | AUDITOR |
+|----------|--------|-------------|-----------|----------|
+| Employee Management | ✓ | ✓ | ✗ | ✗ |
+| Payroll Processing | ✓ | ✓ | ✗ | ✗ |
+| Report Generation | ✓ | ✓ | ✓ | ✗ |
+| Audit Log Access | ✓ | ✗ | ✗ | ✓ |
+| User Management | ✓ | ✗ | ✗ | ✗ |
+
+---
+
+# Audit Logging
+
+Audit functionality is implemented using Spring AOP.
+
+Example annotation:
+
 ```java
-@Aspect
-@Component
-public class AuditLoggingAspect {
-    
-    @Before("@annotation(com.acquitflow.annotations.Auditable)")
-    public void auditBefore(JoinPoint joinPoint) {
-        // Log before action
-    }
-    
-    @AfterReturning("@annotation(com.acquitflow.annotations.Auditable)")
-    public void auditAfter(JoinPoint joinPoint) {
-        // Log after successful action
-    }
+@Auditable(action = "PROCESS_PAYROLL")
+public void processPayroll(...) {
+    ...
 }
 ```
 
+Aspect responsibilities:
+
+- Capture execution metadata
+- Persist audit information
+- Minimize intrusion into business logic
+- Ensure maintainability
+
 ---
 
-## 🤝 Contributing
+# API Endpoints
 
-Contributions are welcome! Please:
+## Authentication
+
+```http
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+```
+
+---
+
+## Employees
+
+```http
+GET    /api/employees
+GET    /api/employees/{id}
+POST   /api/employees
+PUT    /api/employees/{id}
+DELETE /api/employees/{id}
+```
+
+---
+
+## Payroll
+
+```http
+POST /api/payroll/process
+GET  /api/payroll/history/{employeeId}
+GET  /api/payroll/{id}
+```
+
+---
+
+## Reports
+
+```http
+POST /api/reports/generate
+GET  /api/reports/download/{id}
+GET  /api/reports/history
+```
+
+---
+
+## Audit Logs
+
+```http
+GET /api/audit/logs
+GET /api/audit/logs/{userId}
+```
+
+---
+
+# Getting Started
+
+## Prerequisites
+
+Install the following tools:
+
+- Java 17+
+- Node.js 18+
+- PostgreSQL 14+
+- Maven 3.8+
+- Docker (Optional)
+- Git
+
+---
+
+# Backend Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/veritas.git
+
+cd veritas/backend
+```
+
+Install dependencies:
+
+```bash
+./mvnw clean install
+```
+
+Configure environment variables:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/veritas
+spring.datasource.username=postgres
+spring.datasource.password=password
+
+jwt.secret=your-secret-key
+jwt.expiration=86400000
+```
+
+Run the application:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Backend runs on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+# Frontend Setup
+
+Navigate to frontend:
+
+```bash
+cd ../frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create environment file:
+
+```env
+VITE_API_URL=http://localhost:8080/api
+```
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Frontend runs on:
+
+```text
+http://localhost:5173
+```
+
+---
+
+# Docker Setup
+
+Build and run services:
+
+```bash
+docker compose up --build
+```
+
+Stop services:
+
+```bash
+docker compose down
+```
+
+---
+
+# Testing Strategy
+
+## Unit Testing
+
+Frameworks:
+
+- JUnit 5
+- Mockito
+
+Coverage Targets:
+
+```text
+Service Layer    : 80%
+Controller Layer : 70%
+Overall Coverage : 75%
+```
+
+---
+
+## Integration Testing
+
+Uses:
+
+```text
+Testcontainers
+PostgreSQL Containers
+```
+
+Focus Areas:
+
+- Repository Testing
+- Security Testing
+- API Testing
+
+---
+
+# Deployment
+
+## Backend
+
+Supported platforms:
+
+- Render
+- Railway
+- AWS EC2
+- Docker Hosts
+
+---
+
+## Frontend
+
+Recommended platforms:
+
+- Vercel
+- Netlify
+
+---
+
+## Database
+
+Recommended managed PostgreSQL providers:
+
+- Neon
+- Supabase
+- Railway PostgreSQL
+
+---
+
+# Current Development Status
+
+```text
+Backend
+--------
+[ ] JWT Authentication
+[ ] Role-Based Access Control
+[ ] Employee CRUD
+[ ] Salary Engine
+[ ] Payroll Processing
+[ ] Audit Logging
+[ ] PDF Generation
+[ ] Excel Export
+[ ] Unit Testing
+[ ] Integration Testing
+
+Frontend
+---------
+[ ] Authentication UI
+[ ] Dashboard
+[ ] Employee Management Screens
+[ ] Payroll Interface
+[ ] Report Center
+[ ] Audit Dashboard
+
+Deployment
+-----------
+[ ] Docker Setup
+[ ] CI/CD Pipeline
+[ ] Cloud Deployment
+```
+
+---
+
+# Future Enhancements
+
+## HR Features
+
+- Leave Management
+- Attendance Tracking
+- Employee Self-Service Portal
+- Document Management
+
+---
+
+## Payroll Enhancements
+
+- Tax Computation
+- Multi-Currency Support
+- Attendance-Based Payroll
+- Payroll Approval Workflows
+
+---
+
+## Compliance
+
+- E-Signatures
+- Compliance Reporting
+- Data Export Requests
+- Data Retention Policies
+
+---
+
+## Analytics
+
+- Payroll Dashboards
+- Department Cost Analysis
+- Trend Reporting
+- Custom Insights
+
+---
+
+# Architecture Decisions
+
+## Why Spring Boot?
+
+- Mature ecosystem
+- Strong security support
+- Enterprise readiness
+- Excellent testing capabilities
+
+---
+
+## Why React?
+
+- Component-based architecture
+- Fast development cycle
+- Large ecosystem
+- Excellent integration with REST APIs
+
+---
+
+## Why PostgreSQL?
+
+- Reliability
+- ACID compliance
+- Advanced querying capabilities
+- Strong community support
+
+---
+
+## Why Spring AOP?
+
+- Separation of concerns
+- Cleaner business logic
+- Reusable audit functionality
+- Easier maintenance
+
+---
+
+# Contributing
+
+Contributions are welcome.
+
+Steps:
+
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch
+
+```bash
+git checkout -b feature/amazing-feature
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add amazing feature"
+```
+
+4. Push the branch
+
+```bash
+git push origin feature/amazing-feature
+```
+
 5. Open a Pull Request
 
 ---
 
-## 📄 License
+# License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
----
-
-## 📞 Contact & Support
-
-For issues, questions, or suggestions, please open a GitHub issue or contact the maintainer.
-
-**GitHub**: [Sephyroth1](https://github.com/Sephyroth1)
+See the `LICENSE` file for additional details.
 
 ---
 
-## 🙏 Acknowledgments
+# Author
 
-Built during an internal college-level hackathon. This project demonstrates:
-- Full-stack web development (Spring Boot + React)
-- Enterprise architecture patterns (AOP, RBAC)
-- Database design for payroll systems
-- Audit and compliance mechanisms
+**Veritas**
+
+Enterprise Payroll & Compliance Platform with Audit Intelligence.
+
+Built to demonstrate modern enterprise software development practices including secure authentication, auditability, scalable architecture, and maintainable code design.
